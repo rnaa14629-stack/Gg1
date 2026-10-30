@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مهمة تحت الخطر</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#050817;
+ color:white;
+ font-family:Tahoma,Arial,sans-serif;
+ min-height:100vh;
+ overflow-x:hidden;
+}
+.stars{
+ position:fixed;
+ inset:0;
+ pointer-events:none;
+ background-image:
+ radial-gradient(1px 1px at 20px 30px,#fff 99%,transparent),
+ radial-gradient(2px 2px at 110px 90px,#fff 99%,transparent),
+ radial-gradient(1px 1px at 180px 160px,#a5cfff 99%,transparent);
+ background-size:240px 200px;
+ opacity:.55;
+ animation:stars 45s linear infinite;
+}
+@keyframes stars{
+ to{background-position:500px 300px}
+}
+.container{
+ position:relative;
+ max-width:950px;
+ margin:auto;
+ padding:20px;
+}
+header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ border-bottom:1px solid #34405f;
+ padding:15px 0;
+}
+.logo{font-weight:bold;color:#f6a0ca}
+.tag{
+ color:#87e8ef;
+ font-size:12px;
+ border:1px solid #426579;
+ padding:8px;
+ border-radius:20px;
+}
+.card{
+ margin-top:25px;
+ background:linear-gradient(145deg,#141d37,#090e20);
+ border:1px solid #384766;
+ border-radius:22px;
+ overflow:hidden;
+ box-shadow:0 20px 70px #0009;
+}
+.space{
+ height:250px;
+ position:relative;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ background:radial-gradient(circle at 50% 80%,#17365b,#050817 70%);
+ overflow:hidden;
+}
+.earth{
+ position:absolute;
+ width:210px;
+ height:210px;
+ border-radius:50%;
+ bottom:-125px;
+ background:
+ radial-gradient(ellipse at 35% 30%,#63c1d8,transparent 45%),
+ radial-gradient(ellipse at 70% 65%,#2f9b77,transparent 35%),
+ radial-gradient(circle at 30% 30%,#297cbd,#071a48 75%);
+ box-shadow:0 0 55px #287ac977;
+ animation:rotate 12s linear infinite;
+}
+@keyframes rotate{
+ 50%{transform:rotate(12deg)}
+}
+.ship{
+ position:relative;
+ font-size:90px;
+ filter:drop-shadow(0 0 25px #7bdfff);
+ animation:float 3s ease-in-out infinite;
+ z-index:2;
+}
+@keyframes float{
+ 50%{transform:translateY(-13px) rotate(4deg)}
+}
+.warning{
+ position:absolute;
+ top:15px;
+ right:15px;
+ background:#f04e7540;
+ border:1px solid #ff6c8b;
+ padding:9px 15px;
+ border-radius:9px;
+ font-size:12px;
+ animation:blink 1.5s infinite;
+}
+@keyframes blink{50%{opacity:.4}}
+.content{padding:28px}
+h1{font-size:29px;line-height:1.5;margin:10px 0}
+h2{font-size:23px}
+p{color:#c9d4eb;line-height:2;font-size:15px}
+.label{
+ color:#f6a0ca;
+ font-size:12px;
+ font-weight:bold;
+}
+.message{
+ background:#0a1329;
+ border-right:4px solid #f6a0ca;
+ border-radius:9px;
+ padding:16px;
+ margin:20px 0;
+ line-height:2;
+ color:#dbeaff;
+}
+button{
+ display:block;
+ width:100%;
+ padding:15px;
+ margin-top:12px;
+ border:1px solid #536583;
+ border-radius:12px;
+ background:#1b2947;
+ color:white;
+ font-size:15px;
+ font-weight:bold;
+ cursor:pointer;
+ transition:.2s;
+}
+button:hover{
+ background:#30446c;
+ transform:translateY(-2px);
+}
+.primary{
+ background:linear-gradient(90deg,#c44b93,#f18ab5);
+ border:0;
+}
+.primary:hover{background:#e773aa}
+.correct{
+ background:#145c4a!important;
+ border-color:#4bffc3!important;
+}
+.wrong{
+ background:#702b45!important;
+ border-color:#ff8ba9!important;
+}
+.dashboard{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:10px;
+ margin-top:20px;
+}
+.stat{
+ background:#0c152b;
+ padding:15px 8px;
+ border:1px solid #30415f;
+ border-radius:12px;
+ text-align:center;
+}
+.stat small{
+ display:block;
+ color:#9bb0ce;
+ font-size:11px;
+ margin-bottom:8px;
+}
+.stat strong{color:#92eaf1}
+.progress{
+ height:7px;
+ background:#24304c;
+ border-radius:20px;
+ overflow:hidden;
+ margin-top:25px;
+}
+.bar{
+ height:100%;
+ width:0;
+ background:linear-gradient(90deg,#ef86b7,#79dce9);
+ transition:.5s;
+}
+.feedback{
+ padding:17px;
+ border-radius:12px;
+ background:#102b30;
+ border:1px solid #327d78;
+ margin-top:20px;
+ line-height:2;
+}
+.hidden{display:none}
+.final{
+ text-align:center;
+ padding:20px 0;
+}
+.medal{font-size:75px}
+@media(max-width:600px){
+ .container{padding:12px}
+ .content{padding:20px}
+ h1{font-size:24px}
+ .space{height:210px}
+ .ship{font-size:75px}
+}
+</style>
+</head>
+
+<body>
+<div class="stars"></div>
+
+<div class="container">
+<header>
+<div class="logo">🚀 مهمة تحت الخطر</div>
+<div class="tag" id="status">مركز التحكم الفضائي</div>
+</header>
+
+<div class="card">
+<div class="space">
+<div class="warning" id="warning">● في انتظار بدء المهمة</div>
+<div class="ship" id="ship">🚀</div>
+<div class="earth"></div>
+</div>
+
+<div class="content">
+<div class="label" id="chapter">ملف المهمة الفضائية</div>
+<h1 id="title">هل أنت مستعد لإنقاذ المهمة؟</h1>
+
+<p id="description">
+أهلًا بك أيها القائد!
+
+تم اختيارك لقيادة مركبة فضائية متجهة إلى محطة في مدار الأرض.
+
+أثناء الرحلة، قد تواجه أعطالًا ومواقف خطيرة.
+
+مهمتك هي اتخاذ القرار الصحيح لحماية المركبة وإكمال الرحلة بنجاح.
+</p>
+
+<div class="message" id="message">
+📡 مركز التحكم:
+نحن نعتمد عليك أيها القائد. تذكر أن كل مشكلة لها حل!
+</div>
+
+<div id="options">
+<button class="primary" onclick="startGame()">🚀 أنا مستعد للمهمة</button>
+</div>
+
+<div id="feedback" class="feedback hidden"></div>
+
+<div class="dashboard">
+<div class="stat">
+<small>المشكلات المحلولة</small>
+<strong id="solved">0</strong>
+</div>
+<div class="stat">
+<small>سلامة المركبة</small>
+<strong id="health">100%</strong>
+</div>
+<div class="stat">
+<small>المرحلة</small>
+<strong id="level">0 / 6</strong>
+</div>
+</div>
+
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const missions=[
+{
+ title:"انخفاض مستوى الأكسجين",
+ icon:"🫧",
+ alert:"تحذير! مستوى الأكسجين ينخفض!",
+ story:"أثناء رحلتك، يصدر جهاز المراقبة إنذارًا. اكتشفت أن نظام الأكسجين الأساسي توقف عن العمل.",
+ question:"كيف تحافظ على الأكسجين داخل المركبة؟",
+ options:[
+ "فتح أبواب المركبة",
+ "تشغيل نظام الأكسجين الاحتياطي",
+ "زيادة سرعة المركبة"
+ ],
+ correct:1,
+ explain:"أحسنت! تشغيل النظام الاحتياطي يعيد توفير الأكسجين لطاقم المركبة."
+},
+{
+ title:"نيزك يقترب من المركبة",
+ icon:"☄️",
+ alert:"خطر اصطدام وشيك!",
+ story:"رصد الرادار جسمًا صخريًا يقترب من مسار المركبة. أمامك وقت قصير للتصرف.",
+ question:"ما القرار الأنسب لتجنب الاصطدام؟",
+ options:[
+ "تغيير مسار المركبة بعيدًا عن النيزك",
+ "إطفاء جميع الأنظمة",
+ "الاستمرار في المسار نفسه"
+ ],
+ correct:0,
+ explain:"ممتاز! نجحت مناورة تغيير المسار في إبعاد المركبة عن الخطر."
+},
+{
+ title:"انخفاض الطاقة",
+ icon:"⚡",
+ alert:"تحذير! الطاقة منخفضة!",
+ story:"بدأت بطاريات المركبة تفقد طاقتها، ولاحظت أن الألواح الشمسية لا تواجه الشمس بشكل مناسب.",
+ question:"كيف يمكن زيادة الطاقة؟",
+ options:[
+ "إيقاف نظام الاتصال نهائيًا",
+ "زيادة سرعة المحركات",
+ "توجيه الألواح الشمسية نحو الشمس"
+ ],
+ correct:2,
+ explain:"رائع! أصبحت الألواح تستقبل ضوء الشمس وتولد الطاقة من جديد."
+},
+{
+ title:"انقطاع الاتصال بالأرض",
+ icon:"📡",
+ alert:"فقدان الاتصال بمركز التحكم!",
+ story:"اختفى صوت مركز التحكم، ولم تعد المركبة تستقبل الرسائل. تشير الأجهزة إلى أن هوائي الاتصال غير موجه بشكل صحيح.",
+ question:"ما الخطوة الصحيحة؟",
+ options:[
+ "فتح نافذة المركبة",
+ "إعادة توجيه هوائي الاتصال نحو الأرض",
+ "إطفاء أجهزة الملاحة"
+ ],
+ correct:1,
+ explain:"تمت استعادة الاتصال! يستطيع مركز التحكم التواصل معك مجددًا."
+},
+{
+ title:"ارتفاع حرارة المحرك",
+ icon:"🔥",
+ alert:"درجة حرارة المحرك مرتفعة!",
+ story:"أثناء تشغيل المحركات، ارتفعت درجة الحرارة إلى مستوى غير آمن. نظام التبريد ما زال يعمل.",
+ question:"كيف تتعامل مع المشكلة؟",
+ options:[
+ "زيادة قوة المحرك",
+ "تجاهل التحذير",
+ "تخفيض قوة الدفع وتفعيل التبريد المناسب"
+ ],
+ correct:2,
+ explain:"قرار صحيح! انخفضت الحرارة وعاد المحرك إلى مستوى تشغيل آمن."
+},
+{
+ title:"الاقتراب من المحطة الفضائية",
+ icon:"🛰️",
+ alert:"المحطة الفضائية أمامك!",
+ story:"وصلت إلى المرحلة الأخيرة. تظهر المحطة الفضائية أمامك، لكن سرعة الاقتراب أعلى من السرعة المناسبة للالتحام.",
+ question:"ماذا تفعل لإتمام الالتحام بأمان؟",
+ options:[
+ "تخفيف السرعة وضبط اتجاه المركبة",
+ "زيادة السرعة والاندفاع نحو المحطة",
+ "إيقاف أنظمة الملاحة"
+ ],
+ correct:0,
+ explain:"مذهل! تمت عملية الالتحام بنجاح، ووصلت المركبة إلى المحطة الفضائية."
+}
+];
+
+let current=0;
+let solved=0;
+let health=100;
+let mistakes=0;
+let locked=false;
+let audioContext;
+
+function $(id){
+ return document.getElementById(id);
+}
+
+function sound(type){
+ try{
+  audioContext ||= new (window.AudioContext||window.webkitAudioContext)();
+  const oscillator=audioContext.createOscillator();
+  const gain=audioContext.createGain();
+
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+
+  oscillator.type="sine";
+  oscillator.frequency.value=
+   type==="good"?740:type==="bad"?190:450;
+
+  gain.gain.setValueAtTime(.06,audioContext.currentTime);
+  gain.gain.exponentialRampToValueAtTime(
+   .001,audioContext.currentTime+.25
+  );
+
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime+.25);
+ }catch(e){}
+}
+
+function updateStats(){
+ $("solved").textContent=solved;
+ $("health").textContent=health+"%";
+ $("level").textContent=
+  Math.min(current+1,6)+" / 6";
+ $("bar").style.width=(current/6*100)+"%";
+}
+
+function startGame(){
+ current=0;
+ solved=0;
+ health=100;
+ mistakes=0;
+ $("status").textContent="المهمة جارية";
+ showMission();
+}
+
+function showMission(){
+ locked=false;
+ const m=missions[current];
+
+ $("chapter").textContent=
+  "المشكلة "+(current+1)+" من 6";
+
+ $("title").textContent=m.icon+" "+m.title;
+ $("description").textContent=m.story;
+ $("warning").textContent="🚨 "+m.alert;
+ $("message").textContent="📡 مركز التحكم: "+m.question;
+ $("ship").textContent="🚀";
+ $("feedback").classList.add("hidden");
+
+ const box=$("options");
+ box.innerHTML="";
+
+ m.options.forEach((option,index)=>{
+  const button=document.createElement("button");
+  button.textContent=option;
+  button.onclick=()=>answer(index,button);
+  box.appendChild(button);
+ });
+
+ updateStats();
+ sound("alert");
+}
+
+function answer(index,button){
+ if(locked)return;
+
+ const m=missions[current];
+ const feedback=$("feedback");
+
+ feedback.classList.remove("hidden");
+
+ if(index===m.correct){
+  locked=true;
+  solved++;
+
+  button.classList.add("correct");
+
+  feedback.innerHTML=
+   "✅ <strong>قرار صحيح!</strong><br>"+m.explain;
+
+  $("warning").textContent="✅ تم حل المشكلة";
+  sound("good");
+
+  const next=document.createElement("button");
+  next.className="primary";
+  next.textContent=
+   current===missions.length-1?
+   "🏆 عرض نتيجة المهمة":
+   "🚀 الانتقال إلى المشكلة التالية";
+
+  next.onclick=nextMission;
+
+  $("options").appendChild(next);
+
+  document.querySelectorAll("#options button")
+   .forEach(b=>{
+    if(b!==next)b.disabled=true;
+   });
+
+ }else{
+  mistakes++;
+  health=Math.max(20,health-10);
+
+  button.classList.add("wrong");
+  button.disabled=true;
+
+  feedback.innerHTML=
+   "⚠️ <strong>هذا القرار غير مناسب.</strong><br>"+
+   "لا تقلق! ما زال بإمكانك إنقاذ الموقف. "+
+   "اقرأ المشكلة مرة ثانية واختر حلًا آخر.";
+
+  $("warning").textContent="⚠️ حاول مرة أخرى";
+  sound("bad");
+ }
+
+ updateStats();
+}
+
+function nextMission(){
+ current++;
+
+ if(current>=missions.length){
+  finishGame();
+ }else{
+  showMission();
+ }
+}
+
+function finishGame(){
+ $("bar").style.width="100%";
+ $("level").textContent="6 / 6";
+ $("status").textContent="اكتملت المهمة";
+ $("warning").textContent="✅ وصلت المركبة بسلام";
+ $("ship").textContent="🛰️";
+
+ const rating=
+  mistakes===0?"قائد فضائي متميز":
+  mistakes<=3?"قائد فضائي ماهر":
+  "قائد فضائي شجاع";
+
+ $("chapter").textContent="تقرير المهمة النهائي";
+ $("title").textContent="🎉 نجحت المهمة!";
+ $("description").textContent=
+  "تهانينا أيها القائد! "+
+  "تمكنت من مواجهة جميع المشكلات والوصول إلى المحطة الفضائية.";
+
+ $("message").innerHTML=
+  "🏆 <strong>"+rating+"</strong><br>"+
+  "المشكلات المحلولة: "+solved+" من 6<br>"+
+  "المحاولات غير الصحيحة: "+mistakes+"<br>"+
+  "سلامة المركبة: "+health+"%<br><br>"+
+  "📡 رسالة مركز التحكم:<br>"+
+  "أحسنت! أثبتّ قدرتك على اتخاذ القرارات "+
+  "وحل المشكلات تحت الضغط.";
+
+ $("feedback").classList.add("hidden");
+
+ $("options").innerHTML=
+  '<button class="primary" onclick="startGame()">'+
+  '🔄 خوض مهمة جديدة</button>';
+
+ sound("good");
+}
+</script>
+</body>
+</html>
